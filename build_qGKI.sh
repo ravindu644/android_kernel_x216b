@@ -9,6 +9,13 @@ export KERNEL_ROOT="$(pwd)"
 export ARCH=arm64
 export KBUILD_BUILD_USER="@ravindu644"
 
+#setting up localversion
+if [ -z "$BUILD_KERNEL_VERSION" ]; then
+    export BUILD_KERNEL_VERSION="dev"
+fi
+
+echo -e "CONFIG_LOCALVERSION_AUTO=n\nCONFIG_LOCALVERSION=\"-ravindu644-${BUILD_KERNEL_VERSION}\"\n" > "${KERNEL_ROOT}/arch/arm64/configs/version.config"
+
 # Install the requirements for building the kernel when running the script for the first time
 if [ ! -f ".requirements" ]; then
     sudo apt update && sudo apt install -y git device-tree-compiler lz4 xz-utils zlib1g-dev openjdk-17-jdk gcc g++ python3 python-is-python3 p7zip-full android-sdk-libsparse-utils erofs-utils \
@@ -59,7 +66,7 @@ CLANG_TRIPLE=aarch64-linux-gnu- \
 build_kernel(){
     # Make default configuration.
     # Replace 'your_defconfig' with the name of your kernel's defconfig
-    make ${BUILD_OPTIONS} vendor/gta9p_eur_openx_defconfig custom.config
+    make ${BUILD_OPTIONS} vendor/gta9p_eur_openx_defconfig custom.config version.config
 
     # Configure the kernel (GUI)
     make ${BUILD_OPTIONS} menuconfig
