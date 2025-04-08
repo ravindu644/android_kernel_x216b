@@ -64,6 +64,7 @@ CLANG_TRIPLE=aarch64-linux-gnu- \
 "
 
 build_kernel(){
+    set -e
     # Make default configuration.
     # Replace 'your_defconfig' with the name of your kernel's defconfig
     make ${BUILD_OPTIONS} vendor/gta9p_eur_openx_defconfig custom.config version.config
@@ -72,11 +73,33 @@ build_kernel(){
     make ${BUILD_OPTIONS} menuconfig
 
     # Build the kernel
-    make ${BUILD_OPTIONS} Image || exit 1
+    make ${BUILD_OPTIONS} Image
 
     # Copy the built kernel to the build directory
     cp "${KERNEL_ROOT}/out/arch/arm64/boot/Image" "${KERNEL_ROOT}/build"
 
     echo -e "\n[INFO]: BUILD FINISHED..!"
+    set +e
 }
+
+build_boot(){
+    set -e
+    cp "${KERNEL_ROOT}/prebuilt_images/"* "${KERNEL_ROOT}/Android_boot_image_editor"
+    cd "${KERNEL_ROOT}/Android_boot_image_editor" && ./gradlew unpack
+    cp "${KERNEL_ROOT}/build/Image" "build/unzip_boot/kernel" && ./gradlew pack
+    cp "${KERNEL_ROOT}/Android_boot_image_editor/boot.img.signed" "${KERNEL_ROOT}/build/boot.img"
+    cp "${KERNEL_ROOT}"
+    set +e
+}
+
+build_tar(){
+    echo -e "\n[INFO] Creating an Odin flashable tar..\n"
+
+    cd "${KERNEL_ROOT}/build"
+    tar -cvf "KernelSU-Next-SM-X216B-${BUILD_KERNEL_VERSION}.tar" boot.img && rm boot.img
+    echo -e "\n[INFO] Build Finished..!\n" && cd ${KERNEL_ROOT}
+}
+
 build_kernel
+build_boot
+build_tar
