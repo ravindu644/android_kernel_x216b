@@ -59,7 +59,7 @@ CLANG_TRIPLE=aarch64-linux-gnu- \
 build_kernel(){
     # Make default configuration.
     # Replace 'your_defconfig' with the name of your kernel's defconfig
-    make ${BUILD_OPTIONS} vendor/gta9p_eur_openx_defconfig
+    make ${BUILD_OPTIONS} vendor/gta9p_eur_openx_defconfig custom.config
 
     # Configure the kernel (GUI)
     make ${BUILD_OPTIONS} menuconfig
