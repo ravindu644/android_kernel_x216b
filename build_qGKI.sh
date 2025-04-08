@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 echo -e "\n[INFO]: BUILD STARTED..!\n"
 
@@ -64,22 +65,20 @@ CLANG_TRIPLE=aarch64-linux-gnu- \
 "
 
 build_kernel(){
-    set -e
     # Make default configuration.
     # Replace 'your_defconfig' with the name of your kernel's defconfig
     make ${BUILD_OPTIONS} vendor/gta9p_eur_openx_defconfig custom.config version.config
 
     # Configure the kernel (GUI)
-    make ${BUILD_OPTIONS} menuconfig
+    make ${BUILD_OPTIONS} menuconfig || true
 
     # Build the kernel
-    make ${BUILD_OPTIONS} Image
+    make ${BUILD_OPTIONS} Image || exit 1
 
     # Copy the built kernel to the build directory
     cp "${KERNEL_ROOT}/out/arch/arm64/boot/Image" "${KERNEL_ROOT}/build"
 
     echo -e "\n[INFO]: BUILD FINISHED..!"
-    set +e
 }
 
 build_boot(){
@@ -88,7 +87,7 @@ build_boot(){
     cd "${KERNEL_ROOT}/Android_boot_image_editor" && ./gradlew unpack
     cp "${KERNEL_ROOT}/build/Image" "build/unzip_boot/kernel" && ./gradlew pack
     cp "${KERNEL_ROOT}/Android_boot_image_editor/boot.img.signed" "${KERNEL_ROOT}/build/boot.img"
-    cp "${KERNEL_ROOT}"
+    cd "${KERNEL_ROOT}"
     set +e
 }
 
