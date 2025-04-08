@@ -70,7 +70,7 @@ build_kernel(){
     make ${BUILD_OPTIONS} vendor/gta9p_eur_openx_defconfig custom.config version.config
 
     # Configure the kernel (GUI)
-    make ${BUILD_OPTIONS} menuconfig
+    make ${BUILD_OPTIONS} menuconfig || true
 
     # Build the kernel
     make ${BUILD_OPTIONS} Image
