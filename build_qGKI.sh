@@ -64,7 +64,6 @@ CLANG_TRIPLE=aarch64-linux-gnu- \
 "
 
 build_kernel(){
-    set -e
     # Make default configuration.
     # Replace 'your_defconfig' with the name of your kernel's defconfig
     make ${BUILD_OPTIONS} vendor/gta9p_eur_openx_defconfig custom.config version.config
@@ -73,13 +72,12 @@ build_kernel(){
     make ${BUILD_OPTIONS} menuconfig || true
 
     # Build the kernel
-    make ${BUILD_OPTIONS} Image
+    make ${BUILD_OPTIONS} Image || exit 1
 
     # Copy the built kernel to the build directory
     cp "${KERNEL_ROOT}/out/arch/arm64/boot/Image" "${KERNEL_ROOT}/build"
 
     echo -e "\n[INFO]: BUILD FINISHED..!"
-    set +e
 }
 
 build_boot(){
