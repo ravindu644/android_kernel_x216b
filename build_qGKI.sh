@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 echo -e "\n[INFO]: BUILD STARTED..!\n"
 
@@ -86,7 +87,7 @@ build_boot(){
     cd "${KERNEL_ROOT}/Android_boot_image_editor" && ./gradlew unpack
     cp "${KERNEL_ROOT}/build/Image" "build/unzip_boot/kernel" && ./gradlew pack
     cp "${KERNEL_ROOT}/Android_boot_image_editor/boot.img.signed" "${KERNEL_ROOT}/build/boot.img"
-    cp "${KERNEL_ROOT}"
+    cd "${KERNEL_ROOT}"
     set +e
 }
 
