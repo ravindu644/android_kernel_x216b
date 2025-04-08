@@ -40,7 +40,7 @@ jobs:
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
-        tag: ${{ github.event.inputs.tag }}-m14
+        tag: ${{ github.event.inputs.tag }}
         name: "KernelSU-Next-SM-X216B-${{ github.event.inputs.tag }}"
         draft: false
         prerelease: false
