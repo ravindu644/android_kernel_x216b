@@ -81,6 +81,28 @@ build_kernel(){
     echo -e "\n[INFO]: BUILD FINISHED..!"
 }
 
+# Function to upload the releases to gofile.io
+upload_to_gofile() {
+    local file="$1"
+
+    if [[ ! -f "$file" ]]; then
+        echo "❌ File not found: $file"
+        return 1
+    fi
+
+    echo "📤 Uploading $file to GoFile..."
+
+    local link=$(curl -s -X POST 'https://upload.gofile.io/uploadfile' -F "file=@$file" \
+                 | grep -oP '"downloadPage"\s*:\s*"\K[^"]+')
+
+    if [[ -n "$link" ]]; then
+        echo "✅ Link to Download: $link"
+    else
+        echo "❌ Failed to upload or fetch link."
+        return 1
+    fi
+}
+
 build_boot(){
     set -e
     cp "${KERNEL_ROOT}/prebuilt_images/"* "${KERNEL_ROOT}/Android_boot_image_editor"
@@ -96,8 +118,13 @@ build_tar(){
 
     cd "${KERNEL_ROOT}/build"
     tar -cvf "KernelSU-Next-SM-X216B-${BUILD_KERNEL_VERSION}.tar" boot.img && rm boot.img
-    echo -e "\n[INFO] Build Finished..!\n" && cd ${KERNEL_ROOT}
+    set +x
+    echo -e "\n[INFO] Build Finished..!\n"
+    upload_to_gofile "${PWD}/KernelSU-Next-SM-X216B-${BUILD_KERNEL_VERSION}.tar"
+
+    cd "${KERNEL_ROOT}"
 }
+
 
 build_kernel
 build_boot
